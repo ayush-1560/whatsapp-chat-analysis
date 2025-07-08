@@ -79,7 +79,11 @@ if uploaded_file is not None:
         st.title("Weekly Activity Map")
         user_heatmap = helper.activity_heatmap(selected_user,df)
         fig,ax = plt.subplots()
-        ax = sns.heatmap(user_heatmap)
+        if not user_heatmap.empty:
+            ax = sns.heatmap(user_heatmap)
+            st.pyplot(fig)
+        else:
+            st.warning("No activity data available to display heatmap.")
         st.pyplot(fig)
 
         # finding the busiest users in the group(Group level)
@@ -125,7 +129,7 @@ if uploaded_file is not None:
             st.dataframe(emoji_df)
         with col2:
             fig,ax = plt.subplots()
-            ax.pie(emoji_df[1].head(),labels=emoji_df[0].head(),autopct="%0.2f")
+            ax.pie(emoji_df['count'].head(), labels=emoji_df['emoji'].head(), autopct="%0.2f")
             st.pyplot(fig)
 
 
