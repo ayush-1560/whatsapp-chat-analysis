@@ -1,16 +1,26 @@
+
 import re
 import pandas as pd
 
 def preprocess(data):
-    pattern = r'\d{1,2}/\d{1,2}/\d{2},\s\d{1,2}:\d{2}\u202f[ap]m\s-\s'
+    pattern = r'(\d{1,2}/\d{1,2}/\d{2}),\s(\d{1,2}:\d{2})\u202f([ap]m)\s-\s'
 
-    messages = re.split(f'(?={pattern})', data)
-    messages = [m.strip() for m in messages if m.strip()]
-    dates = re.findall(pattern, data)
+    split_data = re.split(pattern, data)
+
+    messages = []
+    dates = []
+
+    # Skip the first element as it comes before the first match
+    for i in range(1, len(split_data), 4):
+        if i + 3 < len(split_data):
+            date_str = f"{split_data[i]}, {split_data[i+1]} {split_data[i+2]}"
+            message = split_data[i+3]
+            dates.append(date_str)
+            messages.append(message.strip())
 
     df = pd.DataFrame({'user_message': messages, 'message_date': dates})
     # convert message_date type
-    df['message_date'] = pd.to_datetime(df['message_date'], format='%d/%m/%Y, %H:%M - ')
+    df['message_date'] = pd.to_datetime(df['message_date'], format='%d/%m/%y, %I:%M %p')
 
     df.rename(columns={'message_date': 'date'}, inplace=True)
 
