@@ -59,7 +59,13 @@ if uploaded_file is not None:
         ax.plot(daily_timeline['only_date'], daily_timeline['message'], color='black')
         plt.xticks(rotation='vertical')
         st.pyplot(fig)
+        # Conversation Highlights - Top 5 Busiest Days
+        st.title("🔥 Conversation Highlights")
 
+        top_days = daily_timeline.sort_values(by='message', ascending=False).head(5)
+
+        for idx, row in top_days.iterrows():
+            st.markdown(f"**📅 {row['only_date'].strftime('%B %d, %Y')}** — 💬 {row['message']} messages")
         # --- Activity Map ---
         st.subheader("📊 Activity Map")
         col1, col2 = st.columns(2)
